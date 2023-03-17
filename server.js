@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 require('dotenv').config();
 
-
+// The only functional part of my code is the start up screen with the connecton data unfortunately.
 const connection = mysql.createConnection(
   {
     host: 'localhost',
@@ -11,7 +11,7 @@ const connection = mysql.createConnection(
     password: '',
     database: 'employee_db'
   });
-
+// This is the statement that will open up the connection to the server or throw an error.
 connection.connect(err => {
   if (err) throw err;
   else {
@@ -30,7 +30,7 @@ connection.connect(err => {
   }
 });
 
-
+// These are the prompts we are met with after seeing the employee tracker window.
 const promptSelect = () => {
   inquirer.prompt ([
     {
@@ -46,6 +46,7 @@ const promptSelect = () => {
       'No Action']
     }
   ])
+  // These create functions to access the choices above.
   .then((answers) => {
     const { choice } = answers;
   if (choice === "View all roles") {
@@ -71,7 +72,7 @@ const promptSelect = () => {
   };
   });
 };
-
+// This function looks out for the roles in the seeds.sql and posts it.
 showRoles = () => {
   console.log('Showing available roles');
   const sql = `SELECT role.id, role.title, department.name AS department FROM role`;
@@ -81,7 +82,7 @@ showRoles = () => {
     promptUser();
   })
 };
-
+// This function reveals the data under the department table.
 showDepartments = () => {
   console.log('Showing available departments');
   const sql = `SELECT department.id, department.name AS department FROM department`;
@@ -91,7 +92,7 @@ showDepartments = () => {
     promptUser();
   }) 
 };
-
+// This function shows the data under the employee table.
 showEmployees = () => {
   console.log('Showing all current employees');
   const sql = `SELECT * FROM employee`
@@ -101,7 +102,7 @@ showEmployees = () => {
     promptUser();
   }) 
 };
-
+// This code allows for the department to create a new item and allows for prompts to make creating one easier.
 addDepartment = () => {
   inquirer.prompt(
     [
@@ -112,7 +113,7 @@ addDepartment = () => {
         }
     ]
   )}
-
+// This does the same as the addDepartment, but for the role table.
 addRole = () => {
   inquirer.prompt(
     [
@@ -130,6 +131,7 @@ addRole = () => {
           }
         },
         {
+          // This makes it possible to type in a monetary value for the wage.
       type: 'input',
       name: 'wage',
       message: "Please type the salary/wage of the new role below",
@@ -144,12 +146,13 @@ addRole = () => {
       }
     ])
     .then(answer => {
-      const params = [answer.addRole, answer.wage];
+      // This allows for the code to have the responses be used for the role table data on newly created employees.
+      const parameters = [answer.addRole, answer.wage];
 const rolesql = `SELECT name, id FROM department`;
-connection.promis().query(rolesql, (err, data) => {
+connection.promise().query(rolesql, (err, data) => {
   if (err) throw err;
 const department = data.mapp(({ name, id }) => ({ name: name, value: id }));
-
+// This chooses the department a person is placed in.
 inquirer.prompt([
   {
     type: 'list',
@@ -158,12 +161,13 @@ inquirer.prompt([
     choices: department
   }
 ])
-.then(deptChoice => {
-  const department = deptChoice.department;
-  params.push(department);
+// This makes the data above be posted for each employee created.
+.then(departmentChoice => {
+  const department = departmentChoice.department;
+  parameters.push(department);
   const sql = `INSERT INTO role (title, salary, department_id)
   VALUES (?, ?, ?)`;
-  connection.query(sql, params, (err, result) => {
+  connection.query(sql, parameters, (err, result) => {
     if (err) throw err;
     console.log('Added' + answer.role + " to roles");
     showRoles();
@@ -172,7 +176,7 @@ inquirer.prompt([
 });
 });
 };
-
+// This function gives questions and code to create new sections in the employee table to add more people.
 addEmployee = () => {
   inquirer.prompt([
     {
@@ -186,15 +190,15 @@ addEmployee = () => {
     message: "Please type the last name of the new employee below"
   }
   ])
-  
+  // This section allows for the answers to be used for the questions above and links it to the employee table.
 .then(answer => {
-  const params = [answer.firstName, answer.lastName]
-  const rolesql = `SELECT role.id, role.title FROM role`;
+  const parameters = [answer.firstName, answer.lastName]
+  const sql = `SELECT role.id, role.title FROM role`;
 
-  connection.promise().query(rolesql, (err, data) => {
+  connection.promise().query(sql, (err, data) => {
     if (err) throw err;
     const roles = data.map(({ id, title }) => ({ name: title, value: id }));
-
+// This question is used to make a choice for which role the employee will be hired for.
     inquirer.prompt([
       {
         type: 'list',
