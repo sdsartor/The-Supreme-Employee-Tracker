@@ -40,7 +40,7 @@ init();
 
   function init() {
       inquirer.prompt({
-          name: "selection",
+          name: "list",
           type: "list",
           message: "Please choose from the following options: ",
           choices: choices
