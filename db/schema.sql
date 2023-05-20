@@ -4,25 +4,24 @@ CREATE DATABASE employee_db;
 USE employee_db;
 
 CREATE TABLE department (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-name VARCHAR(30) NOT NULL
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    dept_name VARCHAR(30) NOT NULL
 );
 -- This creates three different tables and allows for primary keys to be exported to other tables.
 CREATE TABLE role (
-id INT PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(30) NOT NULL,
-salary DECIMAL NOT NULL,
-department_id INT,
-FOREIGN KEY (department_id)
-REFERENCES department(id)
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(30) NOT NULL,
+    salary INT NOT NULL,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
 CREATE TABLE employee (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
-    last_name VARCHAR(35) NOT NULL,
-role_id INT,
-manager_id INT,
-FOREIGN KEY (role_id)
-REFERENCES role(id)
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
+    manager_id INT,
+    FOREIGN KEY (role_id) REFERENCES role(id),
+    FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
