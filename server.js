@@ -1,16 +1,16 @@
-const express = require('express');
-const fs = require('console.table');
+// const express = require('express');
+// const fs = require('console.table');
 const connection = require('./config/connection');
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3001;
-const app = express();
+// const PORT = process.env.PORT || 3001;
+// const app = express();
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
 // The only functional part of my code is the start up screen with the connecton data unfortunately.
 
 // This is the statement that will open up the connection to the server or throw an error.
@@ -22,13 +22,13 @@ app.use(express.json());
   const choices = ['View all departments', 'View all roles', 'View all employees', 'Add department', 'Add role', 'Add employee', 'No Action']
 const departmentarray = [];    
 
-connection.promise().query("SELECT id, dept_name FROM department")
-  .then(([rows, fields]) => {
-    rows.forEach(row => {
-      departmentarray.push({
-        id: row.id,
-        name: row.name
-      });
+// connection.promise().query("SELECT id, dept_name FROM department")
+//   .then(([rows, fields]) => {
+//     rows.forEach(row => {
+//       departmentarray.push({
+//         id: row.id,
+//         name: row.name
+//       });
       console.log(
       `Connected to the employee_db database.
       
@@ -40,12 +40,12 @@ connection.promise().query("SELECT id, dept_name FROM department")
     *                                      *
     *                                      *
     ****************************************`);
-    });
-  })
-  .catch(err => console.log(err));
+  //   });
+  // })
+ 
 
 
-init();
+
 
   function init() {
       inquirer.prompt({
@@ -86,30 +86,30 @@ init();
 };
 // This function looks out for the roles in the seeds.sql and posts it.
 showRoles = () => {
-  connection.query('SELECT * FROM role'),
+  connection.query('SELECT * FROM role', 
   function (error, results, fields) {
-    if (err) throw err;
+    if (error) throw error;
     console.table(results);
     init();
-  }
+  })
 }
 // This function reveals the data under the department table.
 showDepartments = () => {
-  connection.query('SELECT * FROM department'),
+  connection.query('SELECT * FROM department', 
 function (error, results, fields) {
-    if (err) throw err;
+    if (error) throw error;
     console.table(results);
     init();
-  }
+  })
 };
 // This function shows the data under the employee table.
 showEmployees = () => {
-  connection.query('Showing all current employees'),
+  connection.query('SELECT * FROM employee',
   function (error, results, fields) {
-    if (err) throw err;
+    if (error) throw error;
     console.table(results);
     init();
-  }
+  })
 }
 // This code allows for the department to create a new item and allows for prompts to make creating one easier.
 addDepartment = () => {
@@ -122,18 +122,18 @@ addDepartment = () => {
         }
     ]
   ).then(function (answer) {
-    connection.promise().query('INSERT INTO department (dep_name) VALUES (?)', 
+    connection.query('INSERT INTO department (dept_name) VALUES (?)', 
     [answer.addDepartment], 
     function (err, res) {
-      if (err) throw err;
-      console.table(res)
+      if (err) throw err
+      console.log("You successfully added the department")
+      init();
     });
   });
 }
 // This does the same as the addDepartment, but for the role table.
 function addRole() {
-  connection.promise()
-  .query("SELECT id, dept_name FROM department")
+  connection.promise().query("SELECT id, dept_name FROM department")
   .then(([rows, fields]) => {
     const departmentArray = rows.map(row => ({
       name: row.dept_name,
@@ -160,19 +160,14 @@ function addRole() {
         choices: departmentArray
       }
     ]).then(function (answer) {
-      connection.promise()
-        .query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.addRole, answer.wage, answer.department])
-        .then(function (res) {
-          console.log("New role added successfully: ");
-          console.table(res[0]);
-          init();
-        })
+      connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.addRole, answer.wage, answer.department],
+      function (err, res) {
+        if (err) throw err
+        console.log("You successfully added the role")
+        init();
       })
-        .catch(function (err) {
-          console.log(err);
-        });
-    });
-};
+    })
+  })}
   
       // This allows for the code to have the responses be used for the role table data on newly created employees.
      
@@ -217,16 +212,14 @@ function addEmployee() {
 const managerId = answer.manager_id ? null : 1;
 const roleId = answer.roleselection;
 
-  connection.promise(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.first, answer.last, roleId, managerId]`)
-  .then(function (res) {
-    console.table(res[0]);
+  connection.promise().query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.first, answer.last, roleId, managerId],
+  function (err, res) {
+    if (err) throw err
+    console.log("You successfully added an employee")
     init();
-  }) 
-  .catch(function (err) {
-    console.error(err);
+}) 
 });
 });
-  });
-};
+  };
 
 init();

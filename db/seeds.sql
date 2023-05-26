@@ -11,6 +11,6 @@ VALUES (1, "Sales Associate", 35000, 1),
 
 INSERT INTO employee (id, first_name, last_name, role_id)
 VALUES
-(1, "Jane", "Doe", 0),
+(1, "Jane", "Doe", 1);
 
 
