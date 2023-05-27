@@ -3,7 +3,8 @@ https://github.com/sdsartor/The=Supreme-Employee-Tracker
 ## Description
 This code is a node application used to implement an easier employee and role management for work places.  This application will enhance the productivity of a work place, by logging in the data to determine who fits where and how much their annual salary is.
 ## Video Demo
-https://watch.screencastify.com/v/rQm3uvduZrRXACXbPDTu
+![Untitled_ May 26, 2023 8_48 PM](https://github.com/sdsartor/The-Supreme-Employee-Tracker/assets/116858656/f07832a1-dcc7-4a55-9543-529587017a32)
+
 ## Installation
 In order to install this application, the user must have access to VS Code, be able to establish node through the terminal, download inquirer 8.2.4, download sql, download console.table, and optionally download .env to store your password.  Once this is complete, the user can type in node server.js or npm install and the start up screen will pop up.
 ## Usage
